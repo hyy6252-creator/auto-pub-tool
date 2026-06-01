@@ -1,16 +1,50 @@
-# React + Vite
+# 퍼블리싱 자동화 툴
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+pe.html 컴포넌트 기반으로 설계서 이미지/텍스트를 분석해 HTML 초안을 자동 생성하는 툴입니다.
 
-Currently, two official plugins are available:
+## 파일 구조
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+├── index.html          # 메인 UI
+├── pe-components.js    # 컴포넌트 DB (pe.html에서 추출)
+├── api/
+│   └── generate.js     # Vercel Serverless Function (API 키 보호)
+├── vercel.json         # Vercel 배포 설정
+└── README.md
+```
 
-## React Compiler
+## 배포 방법
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1단계 - GitHub 저장소 생성
+1. GitHub에서 새 저장소(repository) 만들기
+2. 이 파일들 전부 업로드 또는 push
 
-## Expanding the ESLint configuration
+### 2단계 - Vercel 연결
+1. https://vercel.com 접속 → GitHub 계정으로 로그인
+2. "Add New Project" → GitHub 저장소 선택
+3. 그대로 Deploy 클릭 (설정 변경 불필요)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 3단계 - API 키 등록
+1. https://console.anthropic.com 에서 API 키 발급
+2. Vercel 프로젝트 → Settings → Environment Variables
+3. 아래 값 추가:
+   - Name: `ANTHROPIC_API_KEY`
+   - Value: `sk-ant-...` (발급받은 키)
+4. Save 후 Vercel에서 Redeploy
+
+### 4단계 - 접속
+Vercel이 제공하는 URL로 접속하면 바로 사용 가능합니다.
+예) `https://publishing-tool.vercel.app`
+
+## 사용 방법
+
+1. 엑슈어 설계서 캡처 이미지를 업로드하거나
+2. 화면 설명을 텍스트로 입력
+3. "HTML 초안 생성" 버튼 클릭
+4. AI가 분석 → 컴포넌트 매핑 → HTML 코드 출력
+5. 코드 복사 후 실제 프로젝트에 붙여넣기
+
+## pe-components.js 업데이트 방법
+
+pe.html이 업데이트되면 컴포넌트 DB도 갱신해야 합니다.
+Claude에게 새 pe.html을 주고 "pe-components.js 다시 만들어줘"라고 하면 됩니다.
